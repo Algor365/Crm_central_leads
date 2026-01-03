@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nomeu CRM - Funil</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .board { display: flex; gap: 16px; }
+    .col { flex: 1; border: 1px solid #ddd; border-radius: 10px; padding: 12px; min-height: 60vh; }
+    .col h2 { margin: 0 0 12px 0; font-size: 18px; }
+    .dropzone { min-height: 50vh; padding: 8px; border-radius: 10px; }
+    .card { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 10px; margin-bottom: 10px; cursor: grab; }
+    .drag-over { outline: 2px dashed #888; background-color: #f0f0f0; }
+    .muted { color: #666; font-size: 12px; }
+    .empty { color: #999; font-style: italic; }
+    .placeholder { display: block; } /* Classe para o texto "Sem leads" */
+  </style>
+</head>
+<body>
+  <h1>Nomeu CRM — Funil</h1>
+
+  {% csrf_token %}
+  <div class="board">
+    <div class="col">
+      <h2>Novo</h2>
+      <div class="dropzone" 
+           data-stage="novo" 
+           ondragover="onDragOver(event)" 
+           ondragleave="onDragLeave(event)" 
+           ondrop="onDrop(event)">
+        {% for lead in novos %}
+          <div class="card" draggable="true" data-id="{{ lead.id }}" ondragstart="onDragStart(event)">
+            <strong>{{ lead.name }}</strong><br/>
+            <span class="muted">{{ lead.email|default:"sem email" }} • {{ lead.number }}</span>
+          </div>
+        {% empty %}
+          <div class="empty placeholder">Sem leads</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="col">
+      <h2>Negociação</h2>
+      <div class="dropzone" 
+           data-stage="negociacao" 
+           ondragover="onDragOver(event)" 
+           ondragleave="onDragLeave(event)" 
+           ondrop="onDrop(event)">
+        {% for lead in negociacao %}
+          <div class="card" draggable="true" data-id="{{ lead.id }}" ondragstart="onDragStart(event)">
+            <strong>{{ lead.name }}</strong><br/>
+            <span class="muted">{{ lead.email|default:"sem email" }} • {{ lead.number }}</span>
+          </div>
+        {% empty %}
+          <div class="empty placeholder">Sem leads</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="col">
+      <h2>Convertido</h2>
+      <div class="dropzone" 
+           data-stage="convertido" 
+           ondragover="onDragOver(event)" 
+           ondragleave="onDragLeave(event)" 
+           ondrop="onDrop(event)">
+        {% for lead in convertido %}
+          <div class="card" draggable="true" data-id="{{ lead.id }}" ondragstart="onDragStart(event)">
+            <strong>{{ lead.name }}</strong><br/>
+            <span class="muted">{{ lead.email|default:"sem email" }} • {{ lead.number }}</span>
+          </div>
+        {% empty %}
+          <div class="empty placeholder">Sem leads</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+<script>
+  let draggedId = null;
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return '';
+  }
+
+  function onDragStart(ev) {
+    draggedId = ev.target.dataset.id;
+    ev.dataTransfer.setData("text/plain", draggedId);
+    ev.dataTransfer.effectAllowed = "move";
+  }
+
+  function onDragOver(ev) {
+    ev.preventDefault();
+    ev.currentTarget.classList.add("drag-over");
+    ev.dataTransfer.dropEffect = "move";
+  }
+
+  function onDragLeave(ev) {
+    ev.currentTarget.classList.remove("drag-over");
+  }
+
+  async function onDrop(ev) {
+    ev.preventDefault();
+    ev.currentTarget.classList.remove("drag-over");
+
+    const leadId = ev.dataTransfer.getData("text/plain") || draggedId;
+    const stage = ev.currentTarget.dataset.stage;
+    const dropzone = ev.currentTarget;
+
+    // Move visualmente primeiro (sensação rápida)
+    const card = document.querySelector(`.card[data-id="${leadId}"]`);
+    if (card) {
+      // Remove de qualquer coluna anterior
+      const previousDropzone = card.closest('.dropzone');
+      card.parentNode.removeChild(card);
+      
+      // Remove o placeholder "Sem leads" da coluna de destino se existir
+      const placeholder = dropzone.querySelector('.placeholder');
+      if (placeholder) {
+        placeholder.remove();
+      }
+      
+      // Adiciona o card na nova coluna
+      dropzone.appendChild(card);
+      
+      // Adiciona placeholder na coluna anterior se ficou vazia
+      if (previousDropzone && previousDropzone.querySelectorAll('.card').length === 0) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'empty placeholder';
+        emptyDiv.textContent = 'Sem leads';
+        previousDropzone.appendChild(emptyDiv);
+      }
+    }
+
+    // Salva no backend
+    const csrftoken = getCookie("csrftoken");
+    try {
+      const resp = await fetch(`/api/leads/${leadId}/mover/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrftoken,
+        },
+        body: JSON.stringify({ etapa_funil: stage }),
+      });
+
+      if (!resp.ok) {
+        throw new Error(`Erro ${resp.status}: ${resp.statusText}`);
+      }
+    } catch (error) {
+      console.error("Erro ao mover lead:", error);
+      alert("Não foi possível mover o lead. Recarregue a página.");
+      // Opcional: recarregar a página para sincronizar
+      location.reload();
+    }
+  }
+
+  // Adiciona os event listeners
+  document.addEventListener('DOMContentLoaded', function() {
+    const dropzones = document.querySelectorAll('.dropzone');
+    dropzones.forEach(dz => {
+      dz.addEventListener('dragover', onDragOver);
+      dz.addEventListener('dragleave', onDragLeave);
+      dz.addEventListener('drop', onDrop);
+    });
+    
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.addEventListener('dragstart', onDragStart);
+    });
+  });
+</script>
+</body>
+</html>
