@@ -31,3 +31,18 @@ def kanban_funil(request):
         "convertido": Lead.objects.filter(etapa_funil=Lead.EtapaFunil.CONVERTIDO),
     }
     return render(request, "crm/kanban.html", ctx)
+
+def get_lead_details(request, lead_id):
+    try:
+        lead = Lead.objects.get(id=lead_id)
+        data = {
+
+            'name': lead.name,
+            'email': lead.email,
+            'number': lead.number,
+            'curso': lead.curso,
+            # adicione outros campos conforme necessário
+        }
+        return JsonResponse(data)
+    except Lead.DoesNotExist:
+        return JsonResponse({'error': 'Lead não encontrado'}, status=404)

@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from lead.views import mover_lead,kanban_funil
+from lead.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/leads/<int:pk>/mover/", mover_lead, name="mover_lead"),
     path("crm/funil/", kanban_funil, name="kanban-funil"),
+    path('api/leads/<int:lead_id>/', get_lead_details, name='lead_details'),
 ]
