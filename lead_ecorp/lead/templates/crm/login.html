@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ecorp • CRM</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600&display=swap');
+
+    :root{
+      --bg-main:#05060f;
+      --panel:rgba(15,20,45,.68);
+      --border:rgba(0,255,255,.35);
+      --neon:#00ffe0;
+      --neon-pink:#ff3cac;
+      --text:#e6faff;
+      --muted:rgba(230,250,255,.65);
+      --danger:#ff5c5c;
+      --shadow:0 20px 60px rgba(0,0,0,.55);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      background:
+        radial-gradient(circle at top, rgba(0,255,224,0.12), transparent 40%),
+        linear-gradient(160deg, #05060f, #070b1f);
+      font-family:'Inter', system-ui, sans-serif;
+      color:var(--text);
+    }
+
+    .card{
+      width:min(520px, 100%);
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      overflow:hidden;
+    }
+
+    .head{
+      padding:22px 22px 14px;
+      border-bottom:1px solid var(--border);
+    }
+
+    .brand{
+      font-family:'Orbitron', sans-serif;
+      color:var(--neon);
+      letter-spacing:1px;
+      text-shadow:0 0 10px rgba(0,255,224,.35);
+      font-size:22px;
+      margin:0 0 6px;
+    }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    form{
+      padding:18px 22px 22px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    label{
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+      display:block;
+    }
+
+    input{
+      width:100%;
+      height:46px;
+      border-radius:12px;
+      border:1px solid rgba(0,255,255,.22);
+      outline:none;
+      padding:0 14px;
+      background: rgba(10,15,35,0.85);
+      color:var(--text);
+      transition:.18s ease;
+    }
+
+    input:focus{
+      border-color: rgba(0,255,224,.60);
+      box-shadow: 0 0 0 4px rgba(0,255,224,.14);
+    }
+
+    .btn{
+      height:48px;
+      border:0;
+      border-radius:12px;
+      cursor:pointer;
+      font-family:'Orbitron', sans-serif;
+      font-weight:700;
+      letter-spacing:.5px;
+      color:var(--bg-main);
+      background: linear-gradient(45deg, var(--neon), var(--neon-pink));
+      box-shadow: 0 0 18px rgba(0,255,224,.20);
+      transition: transform .15s ease, opacity .15s ease;
+      margin-top:6px;
+    }
+    .btn:hover{ transform: translateY(-2px); }
+    .btn:active{ transform: translateY(0px) scale(.99); opacity:.95; }
+
+    .msg{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,92,92,.35);
+      background: rgba(255,92,92,.10);
+      color: #ffd3d3;
+      font-size:13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <h1 class="brand">Ecorp Network CRM</h1>
+      <p class="sub">Faça login para acessar.</p>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="msg">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <div>
+        <label for="username">Usuário</label>
+        <input id="username" name="username" type="text" autocomplete="username" required>
+      </div>
+
+      <div>
+        <label for="password">Senha</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+
+      <button class="btn" type="submit">Entrar</button>
+    </form>
+  </div>
+</body>
+</html>

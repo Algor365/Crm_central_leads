@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Ecorp CRM{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #05060f;
+      --bg-panel: rgba(15, 20, 45, 0.65);
+      --border-neon: rgba(0, 255, 255, 0.35);
+      --neon: #00ffe0;
+      --neon-pink: #ff3cac;
+      --text-main: #e6faff;
+      --text-muted: rgba(230, 250, 255, 0.65);
+      --danger: #ff5c5c;
+      --ok: #3dff9b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(0,255,224,0.16), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(255,60,172,0.10), transparent 45%),
+        linear-gradient(160deg, #05060f, #070b1f);
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    /* grid cyber no fundo */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(to right, rgba(0,255,224,0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,255,224,0.05) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 50% 30%, black 0%, transparent 60%);
+      pointer-events: none;
+      opacity: .9;
+    }
+
+    .wrap {
+      width: min(1200px, 92vw);
+      margin: 0 auto;
+      padding: 22px 0 60px;
+      position: relative;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-neon);
+      box-shadow:
+        0 0 24px rgba(0,255,224,0.10),
+        inset 0 0 18px rgba(0,255,224,0.05);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border-neon);
+      background:
+        linear-gradient(135deg, rgba(0,255,224,0.16), rgba(255,60,172,0.10)),
+        rgba(10,15,35,0.85);
+      box-shadow: 0 0 18px rgba(0,255,224,0.12);
+      position: relative;
+      overflow: hidden;
+    }
+    .logo:after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 180deg, transparent, rgba(0,255,224,.25), transparent);
+      animation: spin 6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg);} }
+
+    .brand-title {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      letter-spacing: 1px;
+      color: var(--neon);
+      text-shadow: 0 0 10px rgba(0,255,224,0.35);
+    }
+    .brand-sub {
+      display: block;
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: .3px;
+    }
+
+    nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .chip {
+      border: 1px solid rgba(0,255,224,0.22);
+      background: rgba(0,255,224,0.06);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      text-decoration: none;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      white-space: nowrap;
+    }
+    .chip:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 16px rgba(0,255,224,0.18);
+      background: rgba(0,255,224,0.09);
+    }
+
+    /* CONTEÚDO */
+    main { margin-top: 16px; }
+
+    .panel {
+      background: var(--bg-panel);
+      backdrop-filter: blur(14px);
+      border-radius: 18px;
+      border: 1px solid var(--border-neon);
+      box-shadow:
+        0 0 30px rgba(0,255,224,0.12),
+        inset 0 0 24px rgba(0,255,224,0.05);
+      overflow: hidden;
+      position: relative;
+    }
+    .panel > .inner { padding: 22px; position: relative; }
+
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      margin: 0 0 12px;
+      letter-spacing: .7px;
+      color: var(--neon);
+    }
+    .muted { color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+
+    /* BOTÕES */
+    .btn {
+      border: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      letter-spacing: .6px;
+      transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0px) scale(0.99); opacity: .95; }
+
+    .btn-primary {
+      background: linear-gradient(45deg, var(--neon), var(--neon-pink));
+      color: var(--bg-main);
+      box-shadow: 0 0 18px rgba(0,255,224,.22);
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(0,255,224,0.35);
+      color: var(--text-main);
+    }
+    .btn-danger {
+      background: transparent;
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      box-shadow: 0 0 14px rgba(255,92,92,.12);
+    }
+
+    /* FORM */
+    .field { display: grid; gap: 8px; margin-bottom: 12px; }
+    label {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(0,255,224,0.9);
+      font-family: 'Orbitron', sans-serif;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,255,224,0.22);
+      background: rgba(10,15,35,0.72);
+      color: var(--text-main);
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+      font-size: 14px;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    input:focus, textarea:focus, select:focus {
+      border-color: rgba(0,255,224,0.45);
+      box-shadow: 0 0 0 3px rgba(0,255,224,0.12);
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+  <div class="grid-bg"></div>
+
+  <div class="wrap">
+    <header>
+      <a class="brand" href="{% url 'kanban-funil' %}">
+        <div class="logo"></div>
+        <div>
+          <h1 class="brand-title">Ecorp Network</h1>
+          <small class="brand-sub">{% block header_subtitle %}Central de Leads{% endblock %}</small>
+        </div>
+      </a>
+
+      <nav>
+        <a class="chip" href="{% url 'kanban-funil' %}">Funil</a>
+        <a class="chip" href="{% url 'landing' %}">Landing</a>
+        <a class="chip" href="{% url 'logout' %}">Sair</a>
+      </nav>
+    </header>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

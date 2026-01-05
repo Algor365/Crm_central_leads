@@ -1,10 +1,10 @@
-<!doctype html>
-<html lang="pt-br">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Nomeu CRM - Funil</title>
-  <style>
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+{% block extra_css %}
+
+<style>
 /* ===============================
    CYBERPUNK CRM THEME
 ================================ */
@@ -22,9 +22,9 @@
   --danger: #ff5c5c;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+
+/* Ajuste para o conteúdo dentro do base.html */
 
 body {
   margin: 0;
@@ -159,9 +159,7 @@ h1 {
    SCROLLBAR
 ================================ */
 
-.dropzone::-webkit-scrollbar {
-  width: 6px;
-}
+.dropzone::-webkit-scrollbar { width: 6px; }
 
 .dropzone::-webkit-scrollbar-thumb {
   background: linear-gradient(var(--neon), var(--neon-pink));
@@ -174,10 +172,7 @@ h1 {
 
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(5, 6, 15, 0.85);
   backdrop-filter: blur(10px);
   display: none;
@@ -187,9 +182,7 @@ h1 {
   padding: 20px;
 }
 
-.modal-overlay.active {
-  display: flex;
-}
+.modal-overlay.active { display: flex; }
 
 .modal {
   background: var(--bg-panel);
@@ -225,8 +218,7 @@ h1 {
   background: none;
   border: 1px solid var(--neon);
   color: var(--neon);
-  width: 36px;
-  height: 36px;
+  width: 36px; height: 36px;
   border-radius: 50%;
   cursor: pointer;
   font-size: 20px;
@@ -270,24 +262,6 @@ h1 {
   color: var(--text-main);
 }
 
-.notes-section {
-  margin-top: 24px;
-}
-
-.notes-section .info-label {
-  margin-bottom: 12px;
-}
-
-.notes-content {
-  background: rgba(0,255,224,0.05);
-  border: 1px solid rgba(0,255,224,0.15);
-  border-radius: 12px;
-  padding: 16px;
-  min-height: 100px;
-  color: var(--text-main);
-  line-height: 1.5;
-}
-
 .loading {
   text-align: center;
   padding: 40px;
@@ -301,41 +275,70 @@ h1 {
   color: var(--danger);
 }
 
+/* ===============================
+   BOTÕES DO MODAL (lado a lado)
+================================ */
+
+.modal-actions{
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn{
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  letter-spacing: .5px;
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+  min-width: 170px;
+}
+
+.btn:hover{ transform: translateY(-2px); }
+
+.btn:active{ transform: translateY(0px) scale(0.99); opacity: .95; }
+
+.btn-primary{
+  background: linear-gradient(45deg, var(--neon), var(--neon-pink));
+  color: var(--bg-main);
+  box-shadow: 0 0 18px rgba(0,255,224,.22);
+}
+
+.btn-danger{
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  box-shadow: 0 0 14px rgba(255,92,92,.12);
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
-  .board {
-    flex-direction: column;
-  }
-  
-  .col {
-    min-height: auto;
-  }
-  
-  .modal {
-    padding: 20px;
-  }
-  
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
+  .board { flex-direction: column; }
+  .col { min-height: auto; }
+  .modal { padding: 20px; }
+  .info-grid { grid-template-columns: 1fr; }
 }
 </style>
+{% endblock %}
 
-</head>
-<body>
-  <h1>Nomeu CRM — Funil</h1>
 
   {% csrf_token %}
   <div class="board">
     <div class="col">
       <h2>Novo</h2>
-      <div class="dropzone" 
-           data-stage="novo" 
-           ondragover="onDragOver(event)" 
-           ondragleave="onDragLeave(event)" 
+      <div class="dropzone"
+           data-stage="novo"
+           ondragover="onDragOver(event)"
+           ondragleave="onDragLeave(event)"
            ondrop="onDrop(event)">
         {% for lead in novos %}
-          <div class="card" draggable="true" data-id="{{ lead.id }}" 
+          <div class="card" draggable="true" data-id="{{ lead.id }}"
                ondragstart="onDragStart(event)"
                onclick="openLeadModal('{{ lead.id }}')">
             <strong>{{ lead.name }}</strong><br/>
@@ -349,13 +352,13 @@ h1 {
 
     <div class="col">
       <h2>Negociação</h2>
-      <div class="dropzone" 
-           data-stage="negociacao" 
-           ondragover="onDragOver(event)" 
-           ondragleave="onDragLeave(event)" 
+      <div class="dropzone"
+           data-stage="negociacao"
+           ondragover="onDragOver(event)"
+           ondragleave="onDragLeave(event)"
            ondrop="onDrop(event)">
         {% for lead in negociacao %}
-          <div class="card" draggable="true" data-id="{{ lead.id }}" 
+          <div class="card" draggable="true" data-id="{{ lead.id }}"
                ondragstart="onDragStart(event)"
                onclick="openLeadModal('{{ lead.id }}')">
             <strong>{{ lead.name }}</strong><br/>
@@ -369,13 +372,13 @@ h1 {
 
     <div class="col">
       <h2>Convertido</h2>
-      <div class="dropzone" 
-           data-stage="convertido" 
-           ondragover="onDragOver(event)" 
-           ondragleave="onDragLeave(event)" 
+      <div class="dropzone"
+           data-stage="convertido"
+           ondragover="onDragOver(event)"
+           ondragleave="onDragLeave(event)"
            ondrop="onDrop(event)">
         {% for lead in convertido %}
-          <div class="card" draggable="true" data-id="{{ lead.id }}" 
+          <div class="card" draggable="true" data-id="{{ lead.id }}"
                ondragstart="onDragStart(event)"
                onclick="openLeadModal('{{ lead.id }}')">
             <strong>{{ lead.name }}</strong><br/>
@@ -396,12 +399,13 @@ h1 {
         <button class="close-btn" onclick="closeLeadModal()">×</button>
       </div>
       <div id="modalContent">
-        <!-- Conteúdo será carregado via JavaScript -->
         <div class="loading">Carregando informações...</div>
       </div>
     </div>
   </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
   let draggedId = null;
   let currentLeadId = null;
@@ -418,7 +422,6 @@ h1 {
     draggedId = ev.target.dataset.id;
     ev.dataTransfer.setData("text/plain", draggedId);
     ev.dataTransfer.effectAllowed = "move";
-    // Previne que o clique abra o modal durante o drag
     ev.stopPropagation();
   }
 
@@ -445,14 +448,12 @@ h1 {
     if (card) {
       const previousDropzone = card.closest('.dropzone');
       card.parentNode.removeChild(card);
-      
+
       const placeholder = dropzone.querySelector('.placeholder');
-      if (placeholder) {
-        placeholder.remove();
-      }
-      
+      if (placeholder) placeholder.remove();
+
       dropzone.appendChild(card);
-      
+
       if (previousDropzone && previousDropzone.querySelectorAll('.card').length === 0) {
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'empty placeholder';
@@ -473,9 +474,7 @@ h1 {
         body: JSON.stringify({ etapa_funil: stage }),
       });
 
-      if (!resp.ok) {
-        throw new Error(`Erro ${resp.status}: ${resp.statusText}`);
-      }
+      if (!resp.ok) throw new Error(`Erro ${resp.status}: ${resp.statusText}`);
     } catch (error) {
       console.error("Erro ao mover lead:", error);
       alert("Não foi possível mover o lead. Recarregue a página.");
@@ -488,95 +487,58 @@ h1 {
     currentLeadId = leadId;
     const modal = document.getElementById('leadModal');
     const modalContent = document.getElementById('modalContent');
-    
+
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    
-    // Mostra loading
+
     modalContent.innerHTML = '<div class="loading">Carregando informações...</div>';
-    
+
     try {
-      // Busca os dados do lead
       const response = await fetch(`/api/leads/${leadId}/`);
-      
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-      
+      if (!response.ok) throw new Error(`Erro ${response.status}: ${response.statusText}`);
+
       const lead = await response.json();
-      
-      // Formata a data (se existir)
-      const formatDate = (dateString) => {
-        if (!dateString) return 'Não informada';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('pt-BR');
-      };
-      
-      // Renderiza os dados do lead
+
       modalContent.innerHTML = `
         <div class="info-grid">
           <div class="info-item">
             <div class="info-label">Nome Completo</div>
             <div class="info-value">${lead.name || 'Não informado'}</div>
           </div>
-          
+
           <div class="info-item">
             <div class="info-label">Email</div>
             <div class="info-value">${lead.email || 'Não informado'}</div>
           </div>
-          
+
           <div class="info-item">
             <div class="info-label">Telefone</div>
             <div class="info-value">${lead.number || 'Não informado'}</div>
           </div>
-          
+
           <div class="info-item">
             <div class="info-label">Curso</div>
             <div class="info-value">${lead.curso || 'Não informado'}</div>
           </div>
+        </div>
 
-         
-        
-       
-        
-        <div style="margin-top: 24px; text-align: center;">
-          <button onclick="editLead('${leadId}')" 
-                  style="background: linear-gradient(45deg, var(--neon), var(--neon-pink));
-                         border: none;
-                         color: var(--bg-main);
-                         padding: 12px 24px;
-                         border-radius: 8px;
-                         cursor: pointer;
-                         font-family: 'Orbitron';
-                         font-weight: bold;
-                         margin-right: 12px;">
-            Editar Lead
-          </button>
-          
-          <button onclick="deleteLead('${leadId}')" 
-                  style="background: transparent;
-                         border: 1px solid var(--danger);
-                         color: var(--danger);
-                         padding: 12px 24px;
-                         border-radius: 8px;
-                         cursor: pointer;
-                         font-family: 'Orbitron';">
-            Excluir Lead
-          </button>
+        <div class="modal-actions">
+          <button class="btn btn-primary" onclick="editLead('${leadId}')">Editar Lead</button>
+          <button class="btn btn-danger" onclick="deleteLead('${leadId}')">Excluir Lead</button>
         </div>
       `;
-      
+
     } catch (error) {
       console.error('Erro ao carregar lead:', error);
       modalContent.innerHTML = `
         <div class="error">
           <p>Erro ao carregar informações do lead.</p>
-          <button onclick="openLeadModal('${leadId}')" 
-                  style="background: var(--neon); 
-                         color: var(--bg-main); 
-                         border: none; 
-                         padding: 10px 20px; 
-                         border-radius: 6px; 
+          <button onclick="openLeadModal('${leadId}')"
+                  style="background: var(--neon);
+                         color: var(--bg-main);
+                         border: none;
+                         padding: 10px 20px;
+                         border-radius: 6px;
                          cursor: pointer;
                          margin-top: 20px;">
             Tentar novamente
@@ -594,45 +556,103 @@ h1 {
   }
 
   function closeModalOnOverlay(event) {
-    if (event.target.classList.contains('modal-overlay')) {
-      closeLeadModal();
-    }
+    if (event.target.classList.contains('modal-overlay')) closeLeadModal();
   }
+  async function deleteLead(leadId) {
+  if (!confirm("Tem certeza que deseja excluir este lead?")) return;
+
+  const csrftoken = getCookie("csrftoken");
+
+  try {
+    const resp = await fetch(`/api/leads/${leadId}/deletar/`, {
+      method: "DELETE",
+      credentials: "same-origin", // ✅ garante envio do cookie
+      headers: {
+        "X-CSRFToken": csrftoken,
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    });
+
+    const text = await resp.text();
+
+    if (!resp.ok) {
+      console.error("DELETE falhou:", resp.status, text);
+      alert(`Erro ao excluir (HTTP ${resp.status}). Veja o console.`);
+      return;
+    }
+
+    // remove card sem F5
+    const card = document.querySelector(`.card[data-id="${leadId}"]`);
+    const dz = card ? card.closest(".dropzone") : null;
+    if (card) card.remove();
+
+    // placeholder se ficou vazio
+    if (dz && dz.querySelectorAll(".card").length === 0) {
+      const emptyDiv = document.createElement("div");
+      emptyDiv.className = "empty placeholder";
+      emptyDiv.textContent = "Sem leads";
+      dz.appendChild(emptyDiv);
+    }
+
+    closeLeadModal();
+
+  } catch (e) {
+    console.error(e);
+    alert("Erro de conexão ao excluir.");
+  }
+}
+
 
   // ==================== UTILITY FUNCTIONS ====================
   function editLead(leadId) {
-    // Redireciona para a página de edição ou abre um formulário de edição
     window.location.href = `/admin/leads/lead/${leadId}/change/`;
-    // Ou implemente um modal de edição aqui
   }
 
-  async function deleteLead(leadId) {
-    if (!confirm('Tem certeza que deseja excluir este lead? Esta ação não pode ser desfeita.')) {
-      return;
+  async function editLead(leadId) {
+  const name = prompt("Nome:");
+  if (name === null) return;
+
+  const email = prompt("Email:");
+  if (email === null) return;
+
+  const number = prompt("Telefone:");
+  if (number === null) return;
+
+  const curso = prompt("Curso:");
+  if (curso === null) return;
+
+  const csrftoken = getCookie("csrftoken");
+
+  try {
+    const resp = await fetch(`/api/leads/${leadId}/editar/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({ name, email, number, curso }),
+    });
+
+    if (!resp.ok) throw new Error(`Erro ${resp.status}`);
+    const data = await resp.json();
+
+    // atualiza o card na tela sem F5
+    const card = document.querySelector(`.card[data-id="${leadId}"]`);
+    if (card) {
+      card.querySelector("strong").textContent = data.lead.name;
+      const muted = card.querySelector(".muted");
+      if (muted) muted.textContent = `${data.lead.email || "sem email"} • ${data.lead.number || ""}`;
     }
-    
-    const csrftoken = getCookie("csrftoken");
-    
-    try {
-      const response = await fetch(`/api/leads/${leadId}/`, {
-        method: 'DELETE',
-        headers: {
-          'X-CSRFToken': csrftoken,
-        },
-      });
-      
-      if (response.ok) {
-        alert('Lead excluído com sucesso!');
-        closeLeadModal();
-        location.reload(); // Recarrega a página para atualizar a lista
-      } else {
-        throw new Error('Erro ao excluir lead');
-      }
-    } catch (error) {
-      console.error('Erro ao excluir lead:', error);
-      alert('Erro ao excluir lead. Tente novamente.');
-    }
+
+    // atualiza modal reabrindo
+    openLeadModal(leadId);
+
+  } catch (e) {
+    console.error(e);
+    alert("Erro ao editar lead.");
   }
+}
+
 
   // ==================== EVENT LISTENERS ====================
   document.addEventListener('DOMContentLoaded', function() {
@@ -642,19 +662,119 @@ h1 {
       dz.addEventListener('dragleave', onDragLeave);
       dz.addEventListener('drop', onDrop);
     });
-    
+
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
       card.addEventListener('dragstart', onDragStart);
     });
-    
-    // Fecha modal com ESC
+
     document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') {
-        closeLeadModal();
-      }
+      if (event.key === 'Escape') closeLeadModal();
     });
   });
+  // ==================== AUTO-REFRESH (POLLING) ====================
+// Busca leads na API a cada X segundos e injeta no board sem F5.
+
+const POLL_MS = 500; // 3s (pode mudar p/ 5s, 8s etc.)
+let knownLeadIds = new Set();
+
+// pega ids que já estão na tela (render do Django)
+function indexExistingCards() {
+  document.querySelectorAll(".card[data-id]").forEach(c => {
+    knownLeadIds.add(String(c.dataset.id));
+  });
+}
+
+function escapeHtml(s) {
+  return String(s ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function buildCardEl(lead) {
+  const div = document.createElement("div");
+  div.className = "card";
+  div.setAttribute("draggable", "true");
+  div.dataset.id = lead.id;
+
+  div.addEventListener("dragstart", onDragStart);
+  div.addEventListener("click", () => openLeadModal(String(lead.id)));
+
+  div.innerHTML = `
+    <strong>${escapeHtml(lead.name)}</strong><br/>
+    <span class="muted">${escapeHtml(lead.email || "sem email")} • ${escapeHtml(lead.number || "")}</span>
+  `;
+  return div;
+}
+
+function getDropzone(stage) {
+  return document.querySelector(`.dropzone[data-stage="${stage}"]`);
+}
+
+function removePlaceholder(dropzone) {
+  const ph = dropzone.querySelector(".placeholder");
+  if (ph) ph.remove();
+}
+
+function ensurePlaceholder(dropzone) {
+  if (dropzone.querySelectorAll(".card").length === 0) {
+    const emptyDiv = document.createElement("div");
+    emptyDiv.className = "empty placeholder";
+    emptyDiv.textContent = "Sem leads";
+    dropzone.appendChild(emptyDiv);
+  }
+}
+
+async function fetchLeads() {
+  // cache-busting: evita o navegador/túnel te devolver resposta “velha”
+  const url = `/api/leads/?_ts=${Date.now()}`;
+  const resp = await fetch(url, { credentials: "same-origin" });
+
+  if (!resp.ok) {
+    console.log("Polling falhou:", resp.status, resp.statusText);
+    return [];
+  }
+
+  const data = await resp.json();
+  return Array.isArray(data) ? data : (data.results || []);
+}
+
+function placeLead(lead) {
+  const id = String(lead.id);
+
+  // etapa: seu model usa etapa_funil (novo/negociacao/convertido)
+  const stage = lead.etapa_funil || "novo";
+  const dz = getDropzone(stage);
+  if (!dz) return;
+
+  const existing = document.querySelector(`.card[data-id="${id}"]`);
+  if (existing) return; // já tá na tela
+
+  removePlaceholder(dz);
+  dz.prepend(buildCardEl(lead));
+  knownLeadIds.add(id);
+}
+
+async function pollNewLeads() {
+  const leads = await fetchLeads();
+
+  // adiciona apenas os que não existiam
+  for (const lead of leads) {
+    const id = String(lead.id);
+    if (!knownLeadIds.has(id)) {
+      placeLead(lead);
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  indexExistingCards();
+  pollNewLeads();                 // roda uma vez ao abrir
+  setInterval(pollNewLeads, POLL_MS); // e depois a cada X segundos
+});
+
 </script>
-</body>
-</html>
+{% endblock %}  

@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}Landing - Cadastro{% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --bg:#070A12;
+    --card:#0B1020;
+    --card2:#0E1630;
+    --txt:#EAF0FF;
+    --muted:#A7B1D6;
+
+    --neon:#7C4DFF;
+    --neon2:#00E5FF;
+    --ok:#21C47B;
+    --err:#FF4D6D;
+
+    --stroke: rgba(255,255,255,.10);
+    --stroke2: rgba(124,77,255,.25);
+    --shadow: 0 20px 60px rgba(0,0,0,.55);
+  }
+
+  .landing *{ box-sizing:border-box; }
+
+  .landing{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    color:var(--txt);
+    background:
+      radial-gradient(900px 400px at 10% 10%, rgba(124,77,255,.18), transparent 60%),
+      radial-gradient(900px 400px at 90% 20%, rgba(0,229,255,.12), transparent 60%),
+      radial-gradient(900px 600px at 50% 100%, rgba(124,77,255,.10), transparent 60%),
+      var(--bg);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  .landing .card{
+    width:min(780px, 100%);
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    border:1px solid var(--stroke);
+    border-radius:18px;
+    box-shadow: var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+
+  .landing .card::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: conic-gradient(from 180deg, rgba(124,77,255,.0), rgba(124,77,255,.35), rgba(0,229,255,.25), rgba(124,77,255,.0));
+    filter: blur(18px);
+    opacity:.35;
+    z-index:0;
+  }
+
+  .landing .card > *{ position:relative; z-index:1; }
+
+  .landing .head{
+    padding:28px 28px 10px;
+    background: linear-gradient(180deg, rgba(14,22,48,.85), rgba(11,16,32,.55));
+    border-bottom:1px solid var(--stroke);
+  }
+
+  .landing .badge{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid var(--stroke2);
+    background: rgba(124,77,255,.10);
+    color: var(--txt);
+    margin-bottom:12px;
+  }
+
+  .landing h1{
+    margin:0 0 6px;
+    font-size:28px;
+    line-height:1.1;
+  }
+
+  .landing .head p{
+    margin:0;
+    color:var(--muted);
+  }
+
+  .landing form{
+    padding:22px 28px 28px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .landing .row{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:16px;
+  }
+
+  @media (max-width: 680px){
+    .landing .row{ grid-template-columns:1fr; }
+    .landing .head{ padding:22px 18px 10px; }
+    .landing form{ padding:18px; }
+  }
+
+  .landing .field label{
+    display:block;
+    font-size:13px;
+    color:var(--muted);
+    margin:0 0 8px;
+  }
+
+  .landing .field input{
+    width:100%;
+    height:46px;
+    border-radius:12px;
+    border:1px solid var(--stroke);
+    outline:none;
+    padding:0 14px;
+    background: rgba(11,16,32,.55);
+    color:var(--txt);
+    transition:.18s ease;
+  }
+
+  .landing .field input:focus{
+    border-color: rgba(124,77,255,.70);
+    box-shadow: 0 0 0 4px rgba(124,77,255,.18);
+  }
+
+  .landing .err{
+    margin-top:8px;
+    font-size:13px;
+    color: #FFD1D9;
+    background: rgba(255,77,109,.12);
+    border:1px solid rgba(255,77,109,.25);
+    padding:10px 12px;
+    border-radius:12px;
+  }
+
+  .landing .btn{
+    height:48px;
+    border:0;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:700;
+    color:#0A0B12;
+    background: linear-gradient(90deg, var(--neon), var(--neon2));
+    box-shadow: 0 10px 30px rgba(124,77,255,.22);
+    transition: transform .12s ease, filter .12s ease;
+  }
+
+  .landing .btn:hover{ filter: brightness(1.05); }
+  .landing .btn:active{ transform: translateY(1px); }
+
+  .landing .hint{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:-6px;
+  }
+
+  .landing .toasts{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .landing .toast{
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid var(--stroke);
+    background: rgba(11,16,32,.45);
+    color: var(--txt);
+  }
+
+  .landing .toast.success{
+    border-color: rgba(33,196,123,.35);
+    background: rgba(33,196,123,.10);
+  }
+
+  .landing .toast.error{
+    border-color: rgba(255,77,109,.35);
+    background: rgba(255,77,109,.10);
+  }
+</style>
+
+<div class="landing">
+  <div class="card">
+    <div class="head">
+      <div class="badge">CRM • Landing</div>
+      <h1>Receba as informações</h1>
+      <p>Preencha seus dados e nossa equipe entra em contato.</p>
+    </div>
+
+    <form method="post" action="{% url 'landing' %}" autocomplete="on" novalidate>
+      {% csrf_token %}
+
+      <div class="field">
+        <label for="{{ form.name.id_for_label }}">Nome</label>
+        {{ form.name }}
+        {% if form.name.errors %}
+          <div class="err">{{ form.name.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="{{ form.number.id_for_label }}">Telefone (WhatsApp)</label>
+          {{ form.number }}
+          {% if form.number.errors %}
+            <div class="err">{{ form.number.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="field">
+          <label for="{{ form.email.id_for_label }}">E-mail</label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="err">{{ form.email.errors|striptags }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="{{ form.curso.id_for_label }}">Curso / Interesse</label>
+        {{ form.curso }}
+        {% if form.curso.errors %}
+          <div class="err">{{ form.curso.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <button class="btn" type="submit">Enviar</button>
+
+      <div class="hint">
+        Ao enviar, você autoriza contato para retorno do atendimento.
+      </div>
+
+      {% if messages %}
+        <div class="toasts">
+          {% for message in messages %}
+            <div class="toast {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </form>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("form");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const btn = form.querySelector(".btn");
+    btn.disabled = true;
+    btn.innerText = "Enviando...";
+
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // limpa form
+        form.reset();
+
+        // feedback visual
+        alert("✅ Lead cadastrado com sucesso!");
+
+        // 👉 AQUI você pode:
+        // - atualizar contador
+        // - adicionar na lista
+        // - disparar animação
+        // - etc
+
+      } else {
+        alert("❌ Erro ao cadastrar lead");
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("❌ Erro de conexão");
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Enviar";
+    }
+  });
+});
+</script>
+{% endblock %}

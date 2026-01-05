@@ -21,6 +21,12 @@ from lead.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/leads/<int:pk>/mover/", mover_lead, name="mover_lead"),
-    path("crm/funil/", kanban_funil, name="kanban-funil"),
+    path("", kanban_funil, name="kanban-funil"),
     path('api/leads/<int:lead_id>/', get_lead_details, name='lead_details'),
+    path("landing/", landing_lead, name="landing"),
+    path("api/leads/", listar_leads, name="listar_leads"),
+    path("api/leads/<int:pk>/editar/", editar_lead, name="editar_lead"),
+    path("api/leads/<int:pk>/deletar/", deletar_lead, name="deletar_lead"),
+    path("login/", login_view, name="login"),
+    path("logout/", logout_view, name="logout"),
 ]
